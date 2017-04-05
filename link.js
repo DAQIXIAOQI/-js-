@@ -1,42 +1,49 @@
 window.onload = function () {
 
     /*--------------------循环链表---------------------*/
-
-    var newlist = createCycListByTail(10);
-    deleteCycList(newlist);
+    var newlist = createCycListIncludeHead(9);
     printfCyclist(newlist);
-   // printfCyclist(newlist);
-    //线性表循环链表初始化（长度为num）
-    function createCycListByTail(num) {
-        var list = createCycNode();
-        var pre = list;
-        for (var i = 0; i < num; i++) {
-            var newnode = new LinkNode(i + 1, list);
-            pre.next = newnode;
-            list.data += 1;
-            pre = newnode;
+    //线性表循环链表初始化（长度为num），链表不包括链头
+    function createCycList(num) {
+        var list = createSingleNode();
+        if (num <= 0 || isNaN(num)) {
+            console.log("创建链表时输入的num值有误");
+            return
         }
-        printfCyclist(list);
+        var firstNode = new LinkNode(1, null);
+        firstNode.next = firstNode;
+        list.next = firstNode;
+        list.data += 1;
+        var per = firstNode;
+        if (num > 1) {
+            for (var i = 2; i <= num; i++) {
+                var newNode = new LinkNode(i, firstNode);
+                per.next = newNode;
+                list.data += 1;
+                per = newNode;
+            }
+        }
         return list
     }
     //这种删除机制感觉会有问题，其他节点仍存在于内存中，但因为没有其他对象对于它们的引用，应该会被浏览器自动回收。也有另一种方法，就是每次都从链表头一直遍历到尾部，释放最后一个节点的内存，然后再从头部循环到尾部释放最后一个节点的内存，但感觉这样性能消耗会比较大。所以就先让浏览器自动回收，后面想到另外的方法再来修改吧！
-    function deleteCycList(list){
-       list.next = list ;
-       list.data = 0 ;
+    function deleteCycList(list) {
+        list.next = list;
+        list.data = 0;
     }
-    
+
     function printfCyclist(list) {
         var pre = list;
         console.log("-----------------循环链表为：------------------");
+        var a = 0;
         while (1) {
             console.log(pre.data);
-            if (pre.next == list) {
-                pre = pre.next;
-                console.log(pre.data);
-                return
-            } else {
-                pre = pre.next;
+            if (pre.next == list.next) {
+                a += 1;
             }
+            if (pre.next == list.next && a == 2) {
+                return
+            }
+            pre = pre.next;
         }
     }
 
@@ -46,6 +53,30 @@ window.onload = function () {
         return list
 
     }
+
+    //約瑟夫問題 
+    function YSF(num) {
+        var list = createCycList(num);
+
+        var bedeleted;
+        var per = list.next;
+
+        while (1) {
+        bedeleted = per.next.next;
+        per = per.next;
+        if (bedeleted == list.next) {
+            list.next = bedeleted.next;
+        }
+        per.next = bedeleted.next;
+        per = bedeleted.next;
+        list.data -= 1;
+            if (list.data == 2) {
+                break
+            }
+        }
+        console.log("当总人数为"+num+"時，最后存活的两人为第"+list.next.data+","+list.next.next.data+"个！"); 
+    }
+
 
     /*---------------------单链表---------------------*/
     //快慢指针获取中间值
@@ -104,12 +135,13 @@ window.onload = function () {
     }
 
     /*--------------------通用方法----------------------*/
-    
-    
+
+
     function LinkNode(data, next) {
         this.data = data;
         this.next = next;
     }
+
     function getItem(list, index) {
         var obj = list.next;
         var j = 1;
@@ -124,6 +156,7 @@ window.onload = function () {
         }
         return obj;
     }
+
     function insertItem(link, index, data) {
         var obj = link;
         var j = 1;
