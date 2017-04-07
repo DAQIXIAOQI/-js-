@@ -1,8 +1,92 @@
 window.onload = function () {
 
+    /*--------------------双向循环链表---------------------*/
+    var list = createNumTwoList(2);
+    list = deleteTwo(list,2);
+    document.title = list.data;
+    printfTwo1(list);
+    function insertTwo(list,index,data){
+        var temp = list ;
+        if(!list||index<0){
+            console.log("输入的值有误");
+            return
+        }
+        for(var i = 1 ; i <= index ; i++){
+            temp = temp.next;
+        }
+        var newnode = new twoLinkNode(data,temp.prev,temp);
+        temp.prev.next = newnode ;
+        temp.prev = newnode ;
+    }
+    //返回值为新的数组
+    function deleteTwo(list,index){
+        var temp = list ;
+        if(!list||index<=0){
+            console.log("输入的值有误");
+            return list
+        }
+        if(temp == temp.next){
+            console.log("此时为空链表，无法删除");
+            return list
+        }
+        for(var i = 1 ; i < index ; i++){
+            temp = temp.next;
+        }
+        var oprev = temp.prev;
+        var onext = temp.next;
+        oprev.next = onext ;
+        onext.prev = oprev ;
+        if(temp == list){
+            list =  onext ;       
+        }
+        return list 
+    }
+    function twoLinkNode(data, prev, next) {
+        this.data = data;
+        this.prev = prev;
+        this.next = next;
+    }
+    function createTwoHead() {
+        var list = new twoLinkNode(1, null, null);
+        list.prev = list ;
+        list.next = list ;
+        return list
+    }
+    function createNumTwoList(num) {
+        if(num<1||isNaN(num)){
+            console.log("输入的num值有误");
+            return
+        }
+        var list = createTwoHead();
+        var temp = list;
+
+        for (var i = 2; i <= num; i++) {
+            var newnode = new twoLinkNode(i, temp, list);
+            temp.next = newnode;
+            list.prev = newnode;
+            temp = newnode;
+        }
+        return list
+    } 
+    function printfTwo1(list){
+        if(list){
+            var temp = list;
+            var a = 0 ;
+            while(1){
+                if(temp == list){
+                    a+=1;
+                }
+                console.log(temp.prev.data+","+temp.data+","+temp.next.data); 
+                temp = temp.next;
+                if(temp == list && a==1){
+                    break
+                }
+            }
+        }
+    }
+
+
     /*--------------------循环链表---------------------*/
-    var newlist = createCycListIncludeHead(9);
-    printfCyclist(newlist);
     //线性表循环链表初始化（长度为num），链表不包括链头
     function createCycList(num) {
         var list = createSingleNode();
@@ -62,19 +146,19 @@ window.onload = function () {
         var per = list.next;
 
         while (1) {
-        bedeleted = per.next.next;
-        per = per.next;
-        if (bedeleted == list.next) {
-            list.next = bedeleted.next;
-        }
-        per.next = bedeleted.next;
-        per = bedeleted.next;
-        list.data -= 1;
+            bedeleted = per.next.next;
+            per = per.next;
+            if (bedeleted == list.next) {
+                list.next = bedeleted.next;
+            }
+            per.next = bedeleted.next;
+            per = bedeleted.next;
+            list.data -= 1;
             if (list.data == 2) {
                 break
             }
         }
-        console.log("当总人数为"+num+"時，最后存活的两人为第"+list.next.data+","+list.next.next.data+"个！"); 
+        console.log("当总人数为" + num + "時，最后存活的两人为第" + list.next.data + "," + list.next.next.data + "个！");
     }
 
 
